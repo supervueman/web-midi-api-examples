@@ -17,7 +17,7 @@ module.exports = {
   // add your custom rules here
   rules: {
     'no-undef': 'off',
-    'no-console': 'warn',
+    'no-console': 'off',
     indent: ['warn', 2],
   },
   // do not need if you using rule: 'no-undef':'off'
