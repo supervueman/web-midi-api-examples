@@ -4,6 +4,20 @@ import './vendor/bootstrap'
 import './vendor/fontawesome'
 
 window.addEventListener('load', () => {
+  let audioCtx
+
+  const startButton = $('.start-btn')
+
+  startButton.click(() => {
+    audioCtx = new AudioContext()
+    console.log(audioCtx)
+  })
+
+  function midiToFrequency(number) {
+    const a = 440
+    return (a / 32) * (2 ** ((number - 9) / 12))
+  }
+
   console.log('load')
   if (navigator.requestMIDIAccess) {
     navigator.requestMIDIAccess().then(success, failure);
@@ -66,6 +80,14 @@ window.addEventListener('load', () => {
 
   function noteOn(note, velocity) {
     console.log(note, velocity)
+
+    const osc = audioCtx.createOscillator()
+    console.log(osc)
+
+    osc.type = 'sine'
+    osc.frequency.value = midiToFrequency(note)
+    osc.connect(audioCtx.destination)
+    osc.start()
   }
 
   function noteOff(note) {
