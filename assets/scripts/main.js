@@ -21,7 +21,9 @@ window.addEventListener('load', () => {
 
     inputs.forEach(input => {
       console.log(input)
-      input.onmidimessage = handleInput
+      input.addEventListener('midimessage', (event) => {
+        handleInput(event)
+      })
     })
   }
 
@@ -40,6 +42,34 @@ window.addEventListener('load', () => {
 
   function handleInput(event) {
     console.log(event)
+    const command = event.data[0]
+    const note = event.data[1]
+    const velocity = event.data[2]
+    console.log(command, note, velocity)
+
+    switch (command) {
+    // Код нажатия и отжатия на каждом устройстве разные
+    // 149 - код нажатия на клавишу на Arturia keylab essential
+    case 149:
+      if (velocity > 0) {
+        noteOn(note, velocity)
+      } else {
+        noteOff(note)
+      }
+      break;
+    // 133 - код отжатия клавиши на Arturia keylab essential
+    case 133:
+      noteOff(note)
+      break;
+    }
+  }
+
+  function noteOn(note, velocity) {
+    console.log(note, velocity)
+  }
+
+  function noteOff(note) {
+    console.log(note)
   }
 
   function failure() {
