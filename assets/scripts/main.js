@@ -82,11 +82,16 @@ window.addEventListener('load', () => {
     console.log(note, velocity)
 
     const osc = audioCtx.createOscillator()
+    const oscGain = audioCtx.createGain()
+
+    oscGain.gain.value = 0.33
     console.log(osc)
 
     osc.type = 'sine'
     osc.frequency.value = midiToFrequency(note)
-    osc.connect(audioCtx.destination)
+
+    osc.connect(oscGain)
+    oscGain.connect(audioCtx.destination)
     osc.start()
   }
 
