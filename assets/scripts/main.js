@@ -115,6 +115,7 @@ window.addEventListener('load', () => {
     const oscGain = osc.gain
 
     oscGain.gain.setValueAtTime(oscGain.gain.value, audioCtx.currentTime)
+    // Для того что бы убрать щелчек после отжатия клавиши
     oscGain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.03)
 
     setTimeout(() => {
