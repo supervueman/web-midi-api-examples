@@ -8,6 +8,8 @@ window.addEventListener('load', () => {
 
   const startButton = $('.start-btn')
 
+  const oscillators = {}
+
   startButton.click(() => {
     audioCtx = new AudioContext()
     console.log(audioCtx)
@@ -82,21 +84,45 @@ window.addEventListener('load', () => {
     console.log(note, velocity)
 
     const osc = audioCtx.createOscillator()
+
+
     const oscGain = audioCtx.createGain()
 
     oscGain.gain.value = 0.33
-    console.log(osc)
+
+    // 127 - максимальная сила нажатия
+    const velocityGainAmout = (1 / 127) * velocity
+    const velocityGain = audioCtx.createGain()
+
+    velocityGain.gain.value = velocityGainAmout
 
     osc.type = 'sine'
     osc.frequency.value = midiToFrequency(note)
 
     osc.connect(oscGain)
-    oscGain.connect(audioCtx.destination)
+    oscGain.connect(velocityGain)
+    velocityGain.connect(audioCtx.destination)
+
+    osc.gain = oscGain
+    oscillators[note.toString()] = osc
+
     osc.start()
   }
 
   function noteOff(note) {
     console.log(note)
+    const osc = oscillators[note.toString()]
+    const oscGain = osc.gain
+
+    oscGain.gain.setValueAtTime(oscGain.gain.value, audioCtx.currentTime)
+    oscGain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.03)
+
+    setTimeout(() => {
+      osc.stop()
+      osc.disconnect()
+    }, 10)
+
+    delete oscillators[note.toString()]
   }
 
   function failure() {
